@@ -97,12 +97,12 @@ class GRPCServer:
 
     @staticmethod
     def destroy():
-        p = subprocess.Popen(["ps", "-A"], stdout=subprocess.PIPE)
+        p = subprocess.Popen(["ps", "-Af"], stdout=subprocess.PIPE)
         out, err = p.communicate()
         for line in out.splitlines():
             if b"medusa.service.grpc.server server.py" in line:
                 logging.info(line)
-                pid = int(line.split(None, 1)[0])
+                pid = int(line.split(None, 2)[1])
                 os.kill(pid, signal.SIGKILL)
 
         if os.path.isdir(os.path.join("/tmp", "medusa_grpc")):
@@ -542,7 +542,7 @@ def _i_verify_over_grpc_backup_exists(context, backup_name):
     assert found is True
 
 
-@then(r'I delete the backup {backup_name} over gRPC')
+@then(r'I delete the backup "{backup_name}" over gRPC')
 def _i_delete_backup_grpc(context, backup_name):
     context.grpc_client.delete_backup(backup_name)
 
