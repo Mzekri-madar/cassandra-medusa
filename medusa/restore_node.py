@@ -82,14 +82,14 @@ def restore_node_locally(config, temp_dir, backup_name, in_place, keep_auth, see
     logging.info('Downloading data from backup to {}'.format(download_dir))
     download_data(config.storage, node_backup, fqtns_to_restore, destination=download_dir)
 
-    if not medusa.utils.evaluate_boolean(config.grpc.enabled):
+    if not medusa.utils.evaluate_boolean(config.kubernetes.enabled):
         logging.info('Stopping Cassandra')
         cassandra.shutdown()
         wait_for_node_to_go_down(config, cassandra.hostname)
 
     # Clean the commitlogs, the saved cache to prevent any kind of conflict
     # especially around system tables.
-    use_sudo = not medusa.utils.evaluate_boolean(config.grpc.enabled)
+    use_sudo = not medusa.utils.evaluate_boolean(config.kubernetes.enabled)
     clean_path(cassandra.commit_logs_path, use_sudo, keep_folder=True)
     clean_path(cassandra.saved_caches_path, use_sudo, keep_folder=True)
 
@@ -114,7 +114,7 @@ def restore_node_locally(config, temp_dir, backup_name, in_place, keep_auth, see
     # In a Kubernetes deployment we can assume that seed nodes will be started first. It will
     # handled either by the statefulset controller or by the controller of a Cassandra
     # operator.
-    if not medusa.utils.evaluate_boolean(config.grpc.enabled):
+    if not medusa.utils.evaluate_boolean(config.kubernetes.enabled):
         if seeds is not None:
             wait_for_seeds(config, seeds)
         else:

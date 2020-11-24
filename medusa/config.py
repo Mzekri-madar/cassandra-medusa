@@ -57,7 +57,7 @@ MonitoringConfig = collections.namedtuple(
 
 MedusaConfig = collections.namedtuple(
     'MedusaConfig',
-    ['storage', 'cassandra', 'ssh', 'checks', 'monitoring', 'logging', 'grpc']
+    ['storage', 'cassandra', 'ssh', 'checks', 'monitoring', 'logging', 'grpc', 'kubernetes']
 )
 
 LoggingConfig = collections.namedtuple(
@@ -68,6 +68,11 @@ LoggingConfig = collections.namedtuple(
 GrpcConfig = collections.namedtuple(
     'GrpcConfig',
     ['enabled', 'cassandra_url']
+)
+
+KubernetesConfig = collections.namedtuple(
+    'KubernetesConfig',
+    ['enabled']
 )
 
 DEFAULT_CONFIGURATION_PATH = pathlib.Path('/etc/medusa/medusa.ini')
@@ -135,6 +140,10 @@ def load_config(args, config_file):
         'cassandra_url': CASSANDRA_URL
     }
 
+    config['kubernetes'] = {
+        'enabled': False
+    }
+
     if config_file:
         logging.debug('Loading configuration from {}'.format(config_file))
         config.read_file(config_file.open())
@@ -183,6 +192,12 @@ def load_config(args, config_file):
         if value is not None
     }})
 
+    config.read_dict({'kubernetes': {
+        key: value
+        for key, value in _zip_fields_with_arg_values(KubernetesConfig._fields, args)
+        if value is not None
+    }})
+
     resolve_ip_addresses = evaluate_boolean(config['cassandra']['resolve_ip_addresses'])
     config.set('cassandra', 'resolve_ip_addresses', 'True' if resolve_ip_addresses else 'False')
     if config['storage']['fqdn'] == socket.getfqdn() and not resolve_ip_addresses:
@@ -196,7 +211,8 @@ def load_config(args, config_file):
         checks=_namedtuple_from_dict(ChecksConfig, config['checks']),
         monitoring=_namedtuple_from_dict(MonitoringConfig, config['monitoring']),
         logging=_namedtuple_from_dict(LoggingConfig, config['logging']),
-        grpc=_namedtuple_from_dict(GrpcConfig, config['grpc'])
+        grpc=_namedtuple_from_dict(GrpcConfig, config['grpc']),
+        kubernetes=_namedtuple_from_dict(KubernetesConfig, config['kubernetes'])
     )
 
     for field in ['bucket_name', 'storage_provider']:

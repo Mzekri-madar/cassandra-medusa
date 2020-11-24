@@ -38,7 +38,8 @@ class RestoreNodeTest(unittest.TestCase):
             ssh=None,
             checks=None,
             logging=None,
-            grpc=None
+            grpc=None,
+            kubernetes=None,
         )
 
     def test_get_node_tokens(self):

@@ -48,6 +48,7 @@ from medusa.config import (
     MonitoringConfig,
     ChecksConfig,
     GrpcConfig,
+    KubernetesConfig,
 )
 from medusa.config import _namedtuple_from_dict
 from medusa.storage import Storage
@@ -473,6 +474,10 @@ def i_am_using_storage_provider_with_grpc_server(context, storage_provider, clie
         "cassandra_url": "http://127.0.0.1:8778/jolokia/",
     }
 
+    config['kubernetes'] = {
+        "enabled": 0
+    }
+
     GRPCServer.destroy()
     context.grpc_server = GRPCServer.init(config)
 
@@ -489,6 +494,7 @@ def i_am_using_storage_provider_with_grpc_server(context, storage_provider, clie
         checks=_namedtuple_from_dict(ChecksConfig, config["checks"]),
         logging=None,
         grpc=_namedtuple_from_dict(GrpcConfig, config["grpc"]),
+        kubernetes=_namedtuple_from_dict(KubernetesConfig, config['kubernetes']),
     )
 
     cleanup_storage(context, storage_provider)

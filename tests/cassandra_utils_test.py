@@ -24,7 +24,8 @@ from cassandra.metadata import Murmur3Token
 from pathlib import Path
 from unittest.mock import Mock
 
-from medusa.config import MedusaConfig, StorageConfig, CassandraConfig, GrpcConfig, _namedtuple_from_dict
+from medusa.config import MedusaConfig, StorageConfig, CassandraConfig, GrpcConfig, _namedtuple_from_dict,\
+    KubernetesConfig
 from medusa.cassandra_utils import CqlSession, SnapshotPath, Nodetool, Cassandra
 
 
@@ -43,6 +44,9 @@ class CassandraUtilsTest(unittest.TestCase):
         config["grpc"] = {
             "enabled": "0"
         }
+        config['kubernetes'] = {
+            "enabled": "0"
+        }
         self.config = MedusaConfig(
             storage=_namedtuple_from_dict(StorageConfig, config['storage']),
             monitoring={},
@@ -51,6 +55,7 @@ class CassandraUtilsTest(unittest.TestCase):
             checks=None,
             logging=None,
             grpc=_namedtuple_from_dict(GrpcConfig, config['grpc']),
+            kubernetes=_namedtuple_from_dict(KubernetesConfig, config['kubernetes']),
         )
 
     def test_tokenmap_one_token(self):
@@ -139,6 +144,9 @@ class CassandraUtilsTest(unittest.TestCase):
         config["grpc"] = {
             "enabled": "0"
         }
+        config['kubernetes'] = {
+            "enabled": "0"
+        }
         medusa_config = MedusaConfig(
             storage=None,
             monitoring=None,
@@ -147,6 +155,7 @@ class CassandraUtilsTest(unittest.TestCase):
             checks=None,
             logging=None,
             grpc=_namedtuple_from_dict(GrpcConfig, config['grpc']),
+            kubernetes=_namedtuple_from_dict(KubernetesConfig, config['kubernetes']),
         )
         n = Nodetool(medusa_config.cassandra).nodetool
         self.assertEqual(n, ['nodetool'])
@@ -164,6 +173,9 @@ class CassandraUtilsTest(unittest.TestCase):
         config["grpc"] = {
             "enabled": "0"
         }
+        config['kubernetes'] = {
+            "enabled": "0"
+        }
         medusa_config = MedusaConfig(
             storage=None,
             monitoring=None,
@@ -172,6 +184,7 @@ class CassandraUtilsTest(unittest.TestCase):
             checks=None,
             logging=None,
             grpc=_namedtuple_from_dict(GrpcConfig, config['grpc']),
+            kubernetes=_namedtuple_from_dict(KubernetesConfig, config['kubernetes']),
         )
         n = Nodetool(medusa_config.cassandra).nodetool
         expected = ['nodetool', '--ssl', '-u', 'cassandra', '-pw', 'password', '-pwf', '/etc/cassandra/jmx.password',
@@ -191,6 +204,9 @@ class CassandraUtilsTest(unittest.TestCase):
         config["grpc"] = {
             "enabled": "0"
         }
+        config['kubernetes'] = {
+            "enabled": "0"
+        }
         medusa_config = MedusaConfig(
             storage=None,
             monitoring=None,
@@ -199,6 +215,7 @@ class CassandraUtilsTest(unittest.TestCase):
             checks=None,
             logging=None,
             grpc=_namedtuple_from_dict(GrpcConfig, config['grpc']),
+            kubernetes=_namedtuple_from_dict(KubernetesConfig, config['kubernetes']),
         )
         n = Nodetool(medusa_config.cassandra).nodetool
         expected = ['nodetool', '-u', 'cassandra', '-pw', 'password', '-pwf', '/etc/cassandra/jmx.password',
@@ -219,6 +236,9 @@ class CassandraUtilsTest(unittest.TestCase):
         config["grpc"] = {
             "enabled": "0"
         }
+        config['kubernetes'] = {
+            "enabled": "0"
+        }
         medusa_config = MedusaConfig(
             storage=None,
             monitoring=None,
@@ -227,6 +247,7 @@ class CassandraUtilsTest(unittest.TestCase):
             checks=None,
             logging=None,
             grpc=_namedtuple_from_dict(GrpcConfig, config['grpc']),
+            kubernetes=_namedtuple_from_dict(KubernetesConfig, config['kubernetes']),
         )
 
         cassandra = Cassandra(medusa_config)
@@ -253,6 +274,9 @@ class CassandraUtilsTest(unittest.TestCase):
         config["grpc"] = {
             "enabled": "0"
         }
+        config['kubernetes'] = {
+            "enabled": "0"
+        }
         medusa_config = MedusaConfig(
             storage=None,
             monitoring=None,
@@ -261,6 +285,7 @@ class CassandraUtilsTest(unittest.TestCase):
             checks=None,
             logging=None,
             grpc=_namedtuple_from_dict(GrpcConfig, config['grpc']),
+            kubernetes=_namedtuple_from_dict(KubernetesConfig, config['kubernetes']),
         )
 
         cassandra = Cassandra(medusa_config)
@@ -288,6 +313,9 @@ class CassandraUtilsTest(unittest.TestCase):
         config["grpc"] = {
             "enabled": "0"
         }
+        config['kubernetes'] = {
+            "enabled": "0"
+        }
         medusa_config = MedusaConfig(
             storage=None,
             monitoring=None,
@@ -296,6 +324,7 @@ class CassandraUtilsTest(unittest.TestCase):
             checks=None,
             logging=None,
             grpc=_namedtuple_from_dict(GrpcConfig, config['grpc']),
+            kubernetes=_namedtuple_from_dict(KubernetesConfig, config['kubernetes']),
         )
 
         cassandra = Cassandra(medusa_config)
@@ -322,6 +351,9 @@ class CassandraUtilsTest(unittest.TestCase):
         config["grpc"] = {
             "enabled": "0"
         }
+        config['kubernetes'] = {
+            "enabled": "0"
+        }
         medusa_config = MedusaConfig(
             storage=None,
             monitoring=None,
@@ -330,6 +362,7 @@ class CassandraUtilsTest(unittest.TestCase):
             checks=None,
             logging=None,
             grpc=_namedtuple_from_dict(GrpcConfig, config['grpc']),
+            kubernetes=_namedtuple_from_dict(KubernetesConfig, config['kubernetes']),
         )
 
         cassandra = Cassandra(medusa_config)
@@ -357,6 +390,9 @@ class CassandraUtilsTest(unittest.TestCase):
         config["grpc"] = {
             "enabled": "0"
         }
+        config['kubernetes'] = {
+            "enabled": "0"
+        }
         medusa_config = MedusaConfig(
             storage=None,
             monitoring=None,
@@ -365,6 +401,7 @@ class CassandraUtilsTest(unittest.TestCase):
             checks=None,
             logging=None,
             grpc=_namedtuple_from_dict(GrpcConfig, config['grpc']),
+            kubernetes=_namedtuple_from_dict(KubernetesConfig, config['kubernetes']),
         )
         cassandra = Cassandra(medusa_config)
         self.assertEqual([], sorted(cassandra.seeds))
