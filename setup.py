@@ -55,13 +55,16 @@ setuptools.setup(
         'retrying>=1.3.3',
         'parallel-ssh==1.9.1',
         'ssh2-python==0.19.0',  # <-- ssh2-python==0.20.0 is broken, 0.22.0+ should work.
-        'requests==2.22.0'
+        'requests==2.22.0',
+        'protobuf>=3.12.0',
+        'grpcio>=1.29.0',
+        'grpcio-health-checking-1.29.0',
+        'grpcio-tools>=1.29.0',
     ],
     extras_require={
         'S3': ["awscli>=1.16.291"],
         'GCS': ["google-cloud-storage>=1.7.0"],
         'AZURE': ["azure-cli>=2.13.0"],
-        'GRPC': ["protobuf>=3.12.0", "grpcio>=1.29.0", "grpcio-health-checking-1.29.0", "grpcio-tools>=1.29.0"]
     },
     entry_points={
         'console_scripts': [
