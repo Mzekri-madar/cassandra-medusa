@@ -11,7 +11,7 @@ import grpc
 import grpc_health.v1.health
 from grpc_health.v1 import health_pb2_grpc
 
-import medusa.backup
+import medusa.backup_node
 import medusa.config
 import medusa.purge
 import medusa.listing
@@ -33,7 +33,7 @@ class MedusaService(medusa_pb2_grpc.MedusaServicer):
         logging.info("Performing backup {}".format(request.name))
         # TODO pass the staggered and mode args
         try:
-            medusa.backup.main(self.config, request.name, None, "differential")
+            medusa.backup_node.main(self.config, request.name, None, "differential")
             return medusa_pb2.BackupResponse()
         except Exception:
             resp = medusa_pb2.BackupResponse()
