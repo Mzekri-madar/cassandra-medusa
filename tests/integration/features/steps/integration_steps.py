@@ -362,6 +362,10 @@ def i_am_using_storage_provider(context, storage_provider, client_encryption):
         "enabled": "0"
     }
 
+    config['kubernetes'] = {
+        "enabled": "0"
+    }
+
     context.medusa_config = MedusaConfig(
         storage=_namedtuple_from_dict(StorageConfig, config["storage"]),
         cassandra=_namedtuple_from_dict(CassandraConfig, config["cassandra"]),
@@ -370,6 +374,7 @@ def i_am_using_storage_provider(context, storage_provider, client_encryption):
         checks=_namedtuple_from_dict(ChecksConfig, config["checks"]),
         logging=None,
         grpc=_namedtuple_from_dict(GrpcConfig, config["grpc"]),
+        kubernetes=_namedtuple_from_dict(KubernetesConfig, config['kubernetes']),
     )
     cleanup_storage(context, storage_provider)
     cleanup_monitoring(context)
@@ -1046,6 +1051,7 @@ def _i_can_verify_the_restore_verify_query_returned_rows(context, query, expecte
         ssh=None,
         logging=None,
         grpc=None,
+        kubernetes=None,
     )
     medusa.verify_restore.verify_restore(["127.0.0.1"], custom_config)
 
