@@ -58,7 +58,7 @@ setuptools.setup(
         'requests==2.22.0',
         'protobuf>=3.12.0',
         'grpcio>=1.29.0',
-        'grpcio-health-checking-1.29.0',
+        'grpcio-health-checking>=1.29.0',
         'grpcio-tools>=1.29.0',
     ],
     extras_require={
