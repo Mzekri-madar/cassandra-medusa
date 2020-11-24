@@ -72,6 +72,8 @@ GrpcConfig = collections.namedtuple(
 
 DEFAULT_CONFIGURATION_PATH = pathlib.Path('/etc/medusa/medusa.ini')
 
+CASSANDRA_URL = 'http://localhost:8778/jolokia/'
+
 
 def load_config(args, config_file):
     config = configparser.ConfigParser(interpolation=None)
@@ -130,7 +132,7 @@ def load_config(args, config_file):
 
     config['grpc'] = {
         'enabled': False,
-        'cassandra_url': 'http://localhost:8778/jolokia/'
+        'cassandra_url': CASSANDRA_URL
     }
 
     if config_file:
