@@ -422,15 +422,7 @@ class Cassandra(object):
             # API that Medusa requires. There should be an implementation for using nodetool,
             # one for Jolokia, and a 3rd for the management sidecard used by Cass Operator.
             if medusa.utils.evaluate_boolean(self.grpc_config.enabled):
-                data = {
-                    "type": "exec",
-                    "mbean": "org.apache.cassandra.db:type=StorageService",
-                    "operation": "takeSnapshot(java.lang.String,java.util.Map,[Ljava.lang.String;)",
-                    "arguments": [tag, {}, []]
-                }
-                response = self.__do_post(data)
-                if response["status"] != 200:
-                    raise Exception("failed to create snapshot: {}".format(response["error"]))
+                self.__do_grpc_take_snapshot(tag)
             else:
                 if self._is_ccm == 1:
                     os.popen(cmd).read()
@@ -445,15 +437,7 @@ class Cassandra(object):
         if self.snapshot_exists(tag):
 
             if medusa.utils.evaluate_boolean(self.grpc_config.enabled):
-                data = {
-                    "type": "exec",
-                    "mbean": "org.apache.cassandra.db:type=StorageService",
-                    "operation": "clearSnapshot",
-                    "arguments": [tag, []]
-                }
-                response = self.__do_post(data)
-                if response["status"] != 200:
-                    raise Exception("failed to delete snapshot: {}".format(response["error"]))
+                self.__do_grpc_delete_snapshot(tag)
             else:
                 if self._is_ccm == 1:
                     os.popen(cmd).read()
@@ -469,11 +453,48 @@ class Cassandra(object):
                             'Check if the snapshot exists and clear it manually '
                             'by running: {}'.format(tag, ' '.join(cmd)))
 
-    def __do_post(self, data):
-        json_data = json.dumps(data)
-        response = requests.post(self.grpc_config.cassandra_url, data=json_data)
+    def __do_grpc_take_snapshot(self, tag):
+        if medusa.utils.evaluate_boolean(self.grpc_config.use_mgmt_api):
+            data = {
+                "snapshot_name": tag
+            }
+        else:
+            data = {
+                "type": "exec",
+                "mbean": "org.apache.cassandra.db:type=StorageService",
+                "operation": "takeSnapshot(java.lang.String,java.util.Map,[Ljava.lang.String;)",
+                "arguments": [tag, {}, []]
+            }
+        response = requests.post(self.grpc_config.cassandra_url,
+                                 data=json.dumps(data),
+                                 headers={"Content-Type": "application/json"})
+        if response.status_code != 200:
+            if medusa.utils.evaluate_boolean(self.grpc_config.use_mgmt_api):
+                err_msg = "failed to create snapshot: {}".format(response.text)
+            else:
+                err_msg = "failed to create snapshot: {}".format(json.loads(response.text)["error"])
+            raise Exception(err_msg)
 
-        return json.loads(response.text)
+    def __do_grpc_delete_snapshot(self, tag):
+        if medusa.utils.evaluate_boolean(self.grpc_config.use_mgmt_api):
+            delete_url = self.grpc_config.cassandra_url + "?snapshotNames=" + tag
+            response = requests.delete(delete_url)
+        else:
+            data = {
+                "type": "exec",
+                "mbean": "org.apache.cassandra.db:type=StorageService",
+                "operation": "clearSnapshot",
+                "arguments": [tag, []]
+            }
+            response = requests.post(self.grpc_config.cassandra_url,
+                                     data=json.dumps(data),
+                                     headers={"Content-Type": "application/json"})
+        if response.status_code != 200:
+            if medusa.utils.evaluate_boolean(self.grpc_config.use_mgmt_api):
+                err_msg = "failed to delete snapshot: {}".format(response.text)
+            else:
+                err_msg = "failed to delete snapshot: {}".format(json.loads(response.text)["error"])
+            raise Exception(err_msg)
 
     def list_snapshotnames(self):
         return {

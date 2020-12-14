@@ -67,7 +67,7 @@ LoggingConfig = collections.namedtuple(
 
 GrpcConfig = collections.namedtuple(
     'GrpcConfig',
-    ['enabled', 'cassandra_url']
+    ['enabled', 'cassandra_url', 'use_mgmt_api']
 )
 
 KubernetesConfig = collections.namedtuple(
@@ -137,7 +137,8 @@ def load_config(args, config_file):
 
     config['grpc'] = {
         'enabled': False,
-        'cassandra_url': CASSANDRA_URL
+        'cassandra_url': CASSANDRA_URL,
+        'use_mgmt_api': False,
     }
 
     config['kubernetes'] = {
