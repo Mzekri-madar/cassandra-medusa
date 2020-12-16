@@ -326,6 +326,7 @@ class Cassandra(object):
         self.seeds = config_reader.seeds
 
         self.grpc_config = config.grpc
+        self.kubernetes_config = config.kubernetes
 
     def _has_systemd(self):
         try:
@@ -421,7 +422,7 @@ class Cassandra(object):
             # Eventually I think we will want to introduce an abstraction layer for Cassandra's
             # API that Medusa requires. There should be an implementation for using nodetool,
             # one for Jolokia, and a 3rd for the management sidecard used by Cass Operator.
-            if medusa.utils.evaluate_boolean(self.grpc_config.enabled):
+            if medusa.utils.evaluate_boolean(self.kubernetes_config.enabled):
                 data = {
                     "type": "exec",
                     "mbean": "org.apache.cassandra.db:type=StorageService",
@@ -444,7 +445,7 @@ class Cassandra(object):
         cmd = self.delete_snapshot_command(tag)
         if self.snapshot_exists(tag):
 
-            if medusa.utils.evaluate_boolean(self.grpc_config.enabled):
+            if medusa.utils.evaluate_boolean(self.kubernetes_config.enabled):
                 data = {
                     "type": "exec",
                     "mbean": "org.apache.cassandra.db:type=StorageService",
@@ -471,7 +472,7 @@ class Cassandra(object):
 
     def __do_post(self, data):
         json_data = json.dumps(data)
-        response = requests.post(self.grpc_config.cassandra_url, data=json_data)
+        response = requests.post(self.kubernetes_config.cassandra_url, data=json_data)
 
         return json.loads(response.text)
 

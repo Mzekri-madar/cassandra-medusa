@@ -67,17 +67,15 @@ LoggingConfig = collections.namedtuple(
 
 GrpcConfig = collections.namedtuple(
     'GrpcConfig',
-    ['enabled', 'cassandra_url']
+    ['enabled']
 )
 
 KubernetesConfig = collections.namedtuple(
     'KubernetesConfig',
-    ['enabled']
+    ['enabled', 'cassandra_url']
 )
 
 DEFAULT_CONFIGURATION_PATH = pathlib.Path('/etc/medusa/medusa.ini')
-
-CASSANDRA_URL = 'http://localhost:8778/jolokia/'
 
 
 def load_config(args, config_file):
@@ -137,11 +135,11 @@ def load_config(args, config_file):
 
     config['grpc'] = {
         'enabled': False,
-        'cassandra_url': CASSANDRA_URL
     }
 
     config['kubernetes'] = {
-        'enabled': False
+        'enabled': False,
+        'cassandra_url': 'None'
     }
 
     if config_file:

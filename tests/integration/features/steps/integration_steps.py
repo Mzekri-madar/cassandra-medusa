@@ -476,11 +476,11 @@ def i_am_using_storage_provider_with_grpc_server(context, storage_provider, clie
 
     config["grpc"] = {
         "enabled": 1,
-        "cassandra_url": "http://127.0.0.1:8778/jolokia/",
     }
 
     config['kubernetes'] = {
-        "enabled": 0
+        "enabled": 1,
+        "cassandra_url": "http://127.0.0.1:8778/jolokia/",
     }
 
     GRPCServer.destroy()
